@@ -138,7 +138,7 @@ def displayTemp(window):
     text_rect.center = (130,90)
     window.blit(surface_text,text_rect)
 
-def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden, game_schema):
+def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden, size):
     pygame.init()
     dimensions = (1000, 650)
     window = pygame.display.set_mode(dimensions)
@@ -155,7 +155,7 @@ def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict,
         displayBridge(window, bridges, posBridgeDict, answer)
         display_forbidden(window, forbidden)
         # displayTemp(window)
-        displayGrid(window,len(game_schema),len(game_schema[0]))
+        displayGrid(window,size[0],size[1])
         pygame.display.flip()
     pygame.quit()
     

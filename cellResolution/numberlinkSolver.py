@@ -204,6 +204,20 @@ def check_bridges(bridges, lenGame, width):
             return False, "bridge on the side of the grid"
     return True,""
 
+def preprocess_nodes_selected(game):
+    convertor = []
+    endDict = dict()
+    forbidden = []
+    lenGame = game["size"]*game["size"]
+    width = game["size"]
+    content = game["game"]
+    for i in range(len(content)):
+        convertor.append(str(i))
+        endDict[i] = list((content[i][0], content[i][1]))
+    nbColor = len(endDict)
+    nbVar = lenGame*nbColor
+    return endDict, lenGame, width,  nbColor, nbVar, convertor, forbidden
+
 #%% Post process
 def format_answer(answer, lenGame, width):
     answer_split = answer.split()
@@ -246,8 +260,11 @@ def find_pos_on_bridges(answer_formatted, bridges):
     return posBridgeDict
 
 #%% Main
-def solve_numberlink(game, path, bridges=[]):
-    endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = preprocess(game)
+def solve_numberlink(game, path, user_initialized = False, content = {}, bridges=[]):
+    if user_initialized:
+        endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = preprocess_nodes_selected(content)
+    else:
+        endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = preprocess(game)
     check, message = check_game(endDict,convertor, forbidden, bridges)
     check_b, message_b = check_bridges(bridges,lenGame, width)
     if not check or not check_b:
