@@ -19,6 +19,7 @@ if created_with_grid:
     if hexa_grid:
         x_human = select_node_pairs_hex(size)
         content = {"game":x_human, "size": size}
+        print("not yet implemented")
     else:
         x_human = select_node_pairs_rec(size)
         content = {"game":x_human, "size": size}

@@ -213,7 +213,7 @@ def preprocess_nodes_selected(game):
     content = game["game"]
     for i in range(len(content)):
         convertor.append(str(i))
-        endDict[i] = list((content[i][0], content[i][1]))
+        endDict[i] = list(((content[i][0][1], content[i][0][0]), (content[i][1][1], content[i][1][0])))
     nbColor = len(endDict)
     nbVar = lenGame*nbColor
     return endDict, lenGame, width,  nbColor, nbVar, convertor, forbidden
