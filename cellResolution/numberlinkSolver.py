@@ -148,26 +148,6 @@ def init_constraint(endDict, lenGame, width, nbColor):
     return constraint
 
 #%% Pre process
-def preprocess_old(game):
-    endDict = dict()
-    lenGame = 0
-    for i in range(len(game)):
-        lenGame += len(game[i])
-        for j in range(len(game[i])):
-            if game[i][j] in "1234567890":
-                nb=int(game[i][j])-1
-                if nb not in endDict:
-                    endDict[nb] = []
-                endDict[nb].append((i,j))
-            elif game[i][j].isupper():
-                nb=ord(game[i][j])-ord("A")+9
-                if nb not in endDict:
-                    endDict[nb] = []
-                endDict[nb].append((i,j))
-    nbColor = len(endDict)
-    nbVar = lenGame*nbColor
-    return endDict, lenGame, len(game[0]), nbColor, nbVar
-
 def preprocess(game):
     endDict = dict()
     convertor = []
@@ -276,7 +256,6 @@ def solve_numberlink(game, path, user_initialized = False, content = {}, bridges
     constraint = add_path_constraint(constraint, lenGame, width, nbColor, endDict, bridges, forbidden)
     answer_formatted = {}
     write_in_file_cnf(path, constraint, nbVar)
-    # return [],endDict,"",convertor
     
     command = ["gophersat","--verbose",path]
     is_satisfiable, answer = run_command(command)
