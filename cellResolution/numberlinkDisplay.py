@@ -1,6 +1,7 @@
 import pygame
 import math
 
+#%% Utils
 colorDict = {
     0: (252, 63, 63),
     1: (101, 252, 63),
@@ -18,6 +19,9 @@ colorDict = {
     13: (252, 63, 120),
 }
 
+def getFont(size):
+    return pygame.font.Font(None, size)
+
 #%% Square cells
 
 def displayGrid(window,height,width):
@@ -31,7 +35,7 @@ def display_forbidden(window, forbidden):
         pygame.draw.rect(window, (0,0,0), (30+40*pos[1],30+40*pos[0],40,40))
 
 def displayNumber(window, endDict, convertor, end = False):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(25)
     for key in endDict:
         color = colorDict[key] if key < len(colorDict) else (0,0,0)
         for pos in endDict[key]:
@@ -44,7 +48,7 @@ def displayNumber(window, endDict, convertor, end = False):
                 window.blit(surface_text,text_rect)
             
 def displayMessage(window,message):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(30)
     surface_text = myFont.render(message, True, (0,0,0), (255,255,255))
     text_rect = surface_text.get_rect()
     text_rect.center = (400,20)
@@ -116,7 +120,7 @@ def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict,
 
 #%% Hexagon cells
 def displayHexagon(window, x, y, d, color,name=""):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(25)
     angles = [math.radians(60 * i+30) for i in range(6)]
     vertices = [
         (x + d * math.cos(angle), y + d * math.sin(angle))
