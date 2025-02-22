@@ -1,5 +1,7 @@
+import json
 import subprocess
-from create_grid import create_rectangular_grid, create_hexagonal_grid
+
+from create_grid import create_hexagonal_grid, create_rectangular_grid
 from make_paths import select_node_pairs_hex, select_node_pairs_rec
 
 
@@ -121,8 +123,10 @@ class NumberlinkSolver:
         return all_constraints
 
 
+config = json.load(open("config.json", "r"))
+
 # Squared case
-grid_size = 7
+grid_size = config["grid_size"]
 # x_human = [
 #     ((0, 3), (6, 4)),
 #     ((1, 1), (2, 3)),
@@ -130,8 +134,20 @@ grid_size = 7
 #     ((1, 5), (3, 3)),
 #     ((2, 4), (5, 2)),
 # ] # Couples of cartesian coordinates of ((s_i x, s_i y) (t_i x, t_i y))
-x_human = select_node_pairs_rec(grid_size)
-V, E, X = create_rectangular_grid(grid_size, x_human)
+shape = config["shape"]
+if shape == "rectangle":
+    x_human = select_node_pairs_rec(grid_size)
+elif shape == "hexagonal":
+    x_human = select_node_pairs_hex(grid_size)
+else:
+    raise ValueError("shape must be either 'rectangle' or 'hexagonal'")
+config["extremities"] = x_human
+json.dump(config, open("config.json", "w"))
+
+if shape == "rectangle":
+    V, E, X = create_rectangular_grid(grid_size, x_human)
+else:
+    V, E, X = create_hexagonal_grid(grid_size, x_human)
 
 # Hexagonal case
 # x_human = [

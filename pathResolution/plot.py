@@ -1,27 +1,29 @@
+import json
+
 import matplotlib.pyplot as plt
 import networkx as nx
-from create_grid import create_hexagonal_grid, create_rectangular_grid
 import numpy as np
 from matplotlib.patches import RegularPolygon
-from make_paths import select_node_pairs_hex, select_node_pairs_rec
+
+from create_grid import create_hexagonal_grid, create_rectangular_grid
 
 # SAT solution
 with open("answer.txt", "r") as f:
     sol = f.read()
 sol = sol.split(" ")
 
-SIZE = 7  # side length or maximum length of hexagon
+config = json.load(open("config.json"))
+SIZE = config["grid_size"]
+shape = config["shape"]
 
 # Square case
-x_human = [
-    ((0, 3), (6, 4)),
-    ((1, 1), (2, 3)),
-    ((1, 4), (6, 0)),
-    ((1, 5), (3, 3)),
-    ((2, 4), (5, 2)),
-]
-V, E, X = create_rectangular_grid(SIZE, x_human)
-
+# x_human = [
+#     ((0, 3), (6, 4)),
+#     ((1, 1), (2, 3)),
+#     ((1, 4), (6, 0)),
+#     ((1, 5), (3, 3)),
+#     ((2, 4), (5, 2)),
+# ]
 # Hexagonal case
 # x_human = [
 #     ((0,3),(6,0)),
@@ -39,10 +41,14 @@ V, E, X = create_rectangular_grid(SIZE, x_human)
 #     ((2, 2), (5, 1)),
 #     ((2, 5), (4, 3)),
 #     ((3, 6), (6, 2)),
-# ]  # get it from the solver.py
+# ]
 
-# V, E, X = create_hexagonal_grid(SIZE, x_human)
-# V_matrix = V.reshape(SIZE, SIZE)
+x_human = config["extremities"]
+if shape == "rectangle":
+    V, E, X = create_rectangular_grid(SIZE, x_human)
+else:
+    V, E, X = create_hexagonal_grid(SIZE, x_human)
+    V_matrix = V.reshape(SIZE, SIZE)
 
 # Problem parameters
 N = SIZE * SIZE  # Number of vertices
@@ -80,7 +86,7 @@ for var in sol_strings:
 for i in range(K):
     paths[i] = [v for _, v in sorted(paths[i])]
 
-print(paths)
+(paths)
 
 
 # Convert vertex indices to grid coordinates
@@ -205,5 +211,8 @@ def plot_rectangular():
     plt.show()
 
 
-plot_rectangular()
+if shape == "hexagonal":
+    plot_hex(V_matrix)
+else:
+    plot_rectangular()
 # plot_hex(V_matrix)
