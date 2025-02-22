@@ -152,26 +152,6 @@ def init_constraint(endDict, lenGame, width, nbColor):
     return constraint
 
 #%% Pre process
-def preprocess_old(game):
-    endDict = dict()
-    lenGame = 0
-    for i in range(len(game)):
-        lenGame += len(game[i])
-        for j in range(len(game[i])):
-            if game[i][j] in "1234567890":
-                nb=int(game[i][j])-1
-                if nb not in endDict:
-                    endDict[nb] = []
-                endDict[nb].append((i,j))
-            elif game[i][j].isupper():
-                nb=ord(game[i][j])-ord("A")+9
-                if nb not in endDict:
-                    endDict[nb] = []
-                endDict[nb].append((i,j))
-    nbColor = len(endDict)
-    nbVar = lenGame*nbColor
-    return endDict, lenGame, len(game[0]), nbColor, nbVar
-
 def preprocess(game):
     endDict = dict()
     convertor = []
@@ -204,6 +184,63 @@ def check_bridges(bridges, lenGame, width):
         if pos[0] == 0 or pos[0] == lenGame//width-1 or pos[1]==0 or pos[1]==width:
             return False, "bridge on the side of the grid"
     return True,""
+
+def convert_position(content):
+    size = content["size"]
+    nodes = content["game"]
+    endDict = dict()
+    forbidden = []
+    convertor = []
+    if size%2==1:
+        halfLine = (size-1)//2
+        for i in range(size//2):
+            nbEnd = i//2+1
+            nbStart = (i+1)//2
+            for j in range(nbStart):
+                forbidden.append((halfLine-i-1, j))
+                forbidden.append((halfLine+i+1, j))
+            for j in range(nbEnd):
+                forbidden.append((halfLine-i-1, size-1-j))
+                forbidden.append((halfLine+i+1, size-1-j))
+        for i in range(len(nodes)):
+            convertor.append(str(i))
+            endDict[i] = []
+            for node in nodes[i]:
+                if node[0] <= halfLine:
+                    diff = halfLine-node[0]+1
+                    endDict[i].append((node[0],node[1]-diff//2))
+                else:
+                    diff = node[0]-halfLine
+                    endDict[i].append((node[0], node[1]+diff//2))
+    else:
+        halfLine = size//2
+        sizePlusOne=size+1
+        for i in range(sizePlusOne//2):
+            nbEnd = i//2+2
+            nbStart = (i+1)//2
+            for j in range(nbStart):
+                forbidden.append((halfLine-i-1, j))
+                if i < sizePlusOne//2-1:
+                    forbidden.append((halfLine+i+1, j))
+            for j in range(nbEnd):
+                forbidden.append((halfLine-i-1, sizePlusOne-1-j))
+                if i < sizePlusOne//2-1:
+                    forbidden.append((halfLine+i+1, sizePlusOne-1-j))
+        for i in range(len(nodes)):
+            convertor.append(str(i))
+            endDict[i] = []
+            for node in nodes[i]:
+                if node[0] <= halfLine:
+                    diff = halfLine-node[0]+1
+                    endDict[i].append((node[0],node[1]-diff//2))
+                else:
+                    diff = node[0]-halfLine
+                    endDict[i].append((node[0], node[1]+diff//2))
+    nbColor = len(endDict)
+    width = size
+    lenGame = size*size
+    nbVar = lenGame*nbColor
+    return endDict, lenGame, width, nbColor, nbVar, convertor, forbidden 
 
 #%% Post process
 def format_answer(answer, lenGame, width):
@@ -248,8 +285,11 @@ def find_pos_on_bridges(answer_formatted, bridges):
     return posBridgeDict
 
 #%% Main
-def solve_numberlink_hexa(game, path,shiftFirstLine, bridges=[]):
-    endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = preprocess(game)
+def solve_numberlink_hexa(game, path,shiftFirstLine, user_initialized = False,content={}, bridges=[]):
+    if user_initialized:
+         endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = convert_position(content)
+    else:
+        endDict, lenGame, width, nbColor, nbVar, convertor, forbidden = preprocess(game)
     check, message = check_game(endDict,convertor)
     check_b, message_b = check_bridges(bridges,lenGame, width)
     if not check or not check_b:
@@ -261,7 +301,6 @@ def solve_numberlink_hexa(game, path,shiftFirstLine, bridges=[]):
     constraint = add_path_constraint(constraint, lenGame, width, nbColor, endDict, bridges, forbidden, shiftFirstLine)
     answer_formatted = {}
     write_in_file_cnf(path, constraint, nbVar)
-    # return [],endDict,"",convertor
     
     command = ["gophersat","--verbose",path]
     is_satisfiable, answer = run_command(command)

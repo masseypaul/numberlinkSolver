@@ -1,6 +1,7 @@
 import pygame
 import math
 
+#%% Utils
 colorDict = {
     0: (252, 63, 63),
     1: (101, 252, 63),
@@ -18,6 +19,9 @@ colorDict = {
     13: (252, 63, 120),
 }
 
+def getFont(size):
+    return pygame.font.Font(None, size)
+
 #%% Square cells
 
 def displayGrid(window,height,width):
@@ -31,7 +35,7 @@ def display_forbidden(window, forbidden):
         pygame.draw.rect(window, (0,0,0), (30+40*pos[1],30+40*pos[0],40,40))
 
 def displayNumber(window, endDict, convertor, end = False):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(25)
     for key in endDict:
         color = colorDict[key] if key < len(colorDict) else (0,0,0)
         for pos in endDict[key]:
@@ -44,7 +48,7 @@ def displayNumber(window, endDict, convertor, end = False):
                 window.blit(surface_text,text_rect)
             
 def displayMessage(window,message):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(30)
     surface_text = myFont.render(message, True, (0,0,0), (255,255,255))
     text_rect = surface_text.get_rect()
     text_rect.center = (400,20)
@@ -91,54 +95,8 @@ def displayBridge(window, bridges, posBridgeDict, answer):
         pygame.draw.line(window, (0,0,0), (40+40*pos[1],60+40*pos[0]),(60+40*pos[1],60+40*pos[0]))
         pygame.draw.line(window, (0,0,0), (60+40*pos[1],60+40*pos[0]),(70+40*pos[1],70+40*pos[0]))
 
-def displayTemp(window):
-    #TODO delete
-    pygame.draw.polygon(window, (0,0,0), [
-            [30,70],
-            [30,110],
-            [70,110],
-            [70,150],
-            [110,150],
-            [110,110],
-            [150,110],
-            [150,70],
-            [110,70],
-            [110,30],
-            [70,30],
-            [70,70]
-        ], width=1)
-    pygame.draw.polygon(window, (0,0,0), [
-            [30,30],
-            [150,30],
-            [150,150],
-            [30,150]
-        ], width=1)
-    pygame.draw.polygon(window, (0,0,0), [
-            [70,70],
-            [110,70],
-            [110,110],
-            [70,110]
-        ], width=1)
-    
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 15)
-    surface_text = myFont.render("(i,j-1)", True, (0,0,0), (101, 252, 63))
-    text_rect = surface_text.get_rect()
-    text_rect.center = (90,50)
-    window.blit(surface_text,text_rect)
-    surface_text = myFont.render("(i,j+1)", True, (0,0,0), (101, 252, 63))
-    text_rect = surface_text.get_rect()
-    text_rect.center = (90,130)
-    window.blit(surface_text,text_rect)
-    surface_text = myFont.render("(i-1,j)", True, (0,0,0), (252, 63, 63))
-    text_rect = surface_text.get_rect()
-    text_rect.center = (50,90)
-    window.blit(surface_text,text_rect)
-    surface_text = myFont.render("(i+1,j)", True, (0,0,0), (252, 63, 63))
-    text_rect = surface_text.get_rect()
-    text_rect.center = (130,90)
-    window.blit(surface_text,text_rect)
 
-def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden, game_schema):
+def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden, size):
     pygame.init()
     dimensions = (1000, 650)
     window = pygame.display.set_mode(dimensions)
@@ -154,8 +112,7 @@ def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict,
         displayMessage(window, message)
         displayBridge(window, bridges, posBridgeDict, answer)
         display_forbidden(window, forbidden)
-        # displayTemp(window)
-        displayGrid(window,len(game_schema),len(game_schema[0]))
+        displayGrid(window,size[0],size[1])
         pygame.display.flip()
     pygame.quit()
     
@@ -163,7 +120,7 @@ def displaySquareGame(answer, endDict, convertor,message,bridges, posBridgeDict,
 
 #%% Hexagon cells
 def displayHexagon(window, x, y, d, color,name=""):
-    myFont = pygame.font.Font("C:\\Windows\\Fonts\\calibri.ttf", 20)
+    myFont = getFont(25)
     angles = [math.radians(60 * i+30) for i in range(6)]
     vertices = [
         (x + d * math.cos(angle), y + d * math.sin(angle))
@@ -204,7 +161,7 @@ def displayGridHexa(window, d, height, width, hidden,answer, endDict,convertor, 
                 name = convertor[key]
             displayHexagon(window, x, y, d, color, name=name)
 
-def displayHexagonGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden,shiftFirstLine, game_schema):
+def displayHexagonGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden,shiftFirstLine, size):
     pygame.init()
     dimensions = (1000, 650)
     window = pygame.display.set_mode(dimensions)
@@ -215,7 +172,7 @@ def displayHexagonGame(answer, endDict, convertor,message,bridges, posBridgeDict
             if event.type == pygame.QUIT:
                 running = False
         displayMessage(window, message)
-        displayGridHexa(window, 20, len(game_schema), len(game_schema[0]), forbidden,answer,endDict,convertor, shiftFirstLine=shiftFirstLine)
+        displayGridHexa(window, 20, size[0], size[1], forbidden,answer,endDict,convertor, shiftFirstLine=shiftFirstLine)
 
         pygame.display.flip()
     pygame.quit()

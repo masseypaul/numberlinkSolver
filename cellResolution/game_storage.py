@@ -1,11 +1,23 @@
 
 game_basic = {
     "hexa": False,
-    "game": ["6A    ","    6A","34    ","      ","1    4","2 21 3"],
+    "game": [
+        "6A    ",
+        "    6A",
+        "34    ",
+        "      ",
+        "1    4",
+        "2 21 3"],
 }
 
 game_basic_walls = {
-    "game": ["#6A    ","#    6A","#34    ","#      ","#1    4","#2 21 3"],
+    "game": [
+        "#6A    ",
+        "#    6A",
+        "#34    ",
+        "#      ",
+        "#1    4",
+        "#2 21 3"],
 }
 
 game_impossible_because_loops = {
@@ -87,12 +99,39 @@ game_square_with_bridges = {
 
 game_hexa = {
     "hexa": True,
-    "game": ["#A   ##",
-            "# B C #",
-            "    D #",
-            "  D A E",
-            "   C  #",
-            "# E  B#",
-            "#    ##"],
+    "game": [
+        "#A   ##",
+        "# B C #",
+        "    D #",
+        "  D A E",
+        "   C  #",
+        "# E  B#",
+        "#    ##"
+        ],
+    "shiftFirstLine": True
+}
+
+game_hexa_5 = {
+    "hexa": True,
+    "game": [
+        "#A A#",
+        "B  B#",
+        "C   C",
+        "D  D#",
+        "#E E#",
+        ],
+    "shiftFirstLine": False
+}
+game_hexa_7 = {
+    "hexa": True,
+    "game": [
+        "#A  A##",
+        "#B   B#",
+        "C    C#",
+        "D     D",
+        "E    E#",
+        "#F   F#",
+        "#G  G##"
+        ],
     "shiftFirstLine": True
 }
