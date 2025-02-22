@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Button
 import numpy as np
 from matplotlib.patches import RegularPolygon
+from matplotlib.widgets import Button
 
 colors = ["red", "blue", "green", "yellow", "purple"]
 color_index = 0
 
 
 # Function to collect start-end node pairs interactively
-def select_node_pairs_rec(grid_size=6):
+def select_node_pairs_rec(grid_size):
     x_human = []
     clicks = []
     fig, ax = plt.subplots()
@@ -40,7 +40,7 @@ def select_node_pairs_rec(grid_size=6):
 
                 clicks.append((x, y))
                 if len(clicks) == 2:
-                    x_human.append((clicks[0], clicks[1]))
+                    x_human.append([clicks[0], clicks[1]])
                     print(f"Pair recorded: {clicks[0]} -> {clicks[1]}")
                     clicks.clear()
                     color_index += 1
@@ -58,7 +58,7 @@ def select_node_pairs_rec(grid_size=6):
 
 
 # Function to collect start-end node pairs interactively on a hexagonal grid
-def select_node_pairs_hex(grid_size=6):
+def select_node_pairs_hex(grid_size):
     x_human = []
     clicks = []
     fig = plt.figure(figsize=(8, 8))
@@ -112,7 +112,7 @@ def select_node_pairs_hex(grid_size=6):
                     clicks.append((r, q))
 
                     if len(clicks) == 2:
-                        x_human.append((clicks[0], clicks[1]))
+                        x_human.append([clicks[0], clicks[1]])
                         print(f"Pair recorded: {clicks[0]} -> {clicks[1]}")
                         clicks.clear()
                         color_index += 1
