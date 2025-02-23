@@ -9,11 +9,18 @@ from make_paths import select_node_pairs_hex, select_node_pairs_rec
 
 path = "./numberlink.cnf"
 
-
+##################################
+## Change this section (and the imports if creation of a new grid)
+# game : object from game_storage.py
+# created_with_grid : False to have a grid from grid_storage, True to have the user selection
+# hexa_grid : if True for created_with_grid, enable hexagonal game
+# size : int of the size of the grid when True for created_with_grid
 game = game_CR
-created_with_grid = True
+
+created_with_grid = False
 hexa_grid = True
 size = 4
+##################################################################
 
 if created_with_grid:
     if hexa_grid:
@@ -31,7 +38,7 @@ if created_with_grid:
 else:
     if "hexa" in game and game["hexa"]:
         game_schema = game["game"]
-        shiftFirstLine = game["shiftFirstLine"]
+        shiftFirstLine = game["shiftFirstLine"] if "shiftFirstLine" in game else False
         bridges=[]
         answer, endDict, message, convertor,posBridgeDict, forbidden = solve_numberlink_hexa(game_schema, path,shiftFirstLine)
         displayHexagonGame(answer, endDict, convertor,message,bridges, posBridgeDict, forbidden,shiftFirstLine, (len(game_schema), len(game_schema[0])))
