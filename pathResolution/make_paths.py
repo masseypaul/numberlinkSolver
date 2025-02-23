@@ -14,7 +14,7 @@ def select_node_pairs_rec(grid_size):
     fig, ax = plt.subplots()
 
     ax.set_xlim(0, grid_size)
-    ax.set_ylim(0, grid_size)
+    ax.set_ylim(grid_size, 0)
     ax.set_xticks(range(grid_size + 1))
     ax.set_yticks(range(grid_size + 1))
     ax.grid(True)
@@ -38,7 +38,7 @@ def select_node_pairs_rec(grid_size):
                 cell_patches[(x, y)].set_color(grid_colors[x, y])
                 plt.draw()
 
-                clicks.append((x, y))
+                clicks.append((y, x))
                 if len(clicks) == 2:
                     x_human.append([clicks[0], clicks[1]])
                     print(f"Pair recorded: {clicks[0]} -> {clicks[1]}")

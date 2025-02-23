@@ -44,21 +44,30 @@ class NumberlinkSolver:
         self.xphant_ip = [
             f"xphant_{i}_{p}" for i in range(self.k) for p in range(self.n)
         ]
+        self.no_none = self.__count_no_none__()
+
+    def __count_no_none__(self):
+        count = 0
+        for v in self.V:
+            if v is not None:
+                count += 1
+        return count
 
     def constraint_one(self, v):
         # Each vertex v appears at a single position in a single path
         clauses = []
 
         # At least appears at one position and path
-        # at_least_one = " ".join([f'x_{v}_{i}_{p}' for i in range(self.k) for p in range(self.n)])
-        # clauses.append(at_least_one)
+        if v < self.no_none:
+            at_least_one = " ".join([f'x_{v}_{i}_{p}' for i in range(self.k) for p in range(self.n)])
+            clauses.append(at_least_one)
 
         # At most appears at one path
         for i in range(self.k):
             for j in range(i + 1, self.k):
                 for p in range(self.n):
                     for q in range(self.n):
-                        clauses.append(f"-x_{v}_{i}_{p} -x_{v}_{j}_{p}")
+                        clauses.append(f"-x_{v}_{i}_{p} -x_{v}_{j}_{q}")
 
         # At most appears at one position
         for i in range(self.k):
@@ -134,21 +143,6 @@ grid_size = config["grid_size"]
 #     ((1, 5), (3, 3)),
 #     ((2, 4), (5, 2)),
 # ] # Couples of cartesian coordinates of ((s_i x, s_i y) (t_i x, t_i y))
-shape = config["shape"]
-if shape == "rectangle":
-    x_human = select_node_pairs_rec(grid_size)
-elif shape == "hexagonal":
-    x_human = select_node_pairs_hex(grid_size)
-else:
-    raise ValueError("shape must be either 'rectangle' or 'hexagonal'")
-config["extremities"] = x_human
-json.dump(config, open("config.json", "w"))
-
-if shape == "rectangle":
-    V, E, X = create_rectangular_grid(grid_size, x_human)
-else:
-    V, E, X = create_hexagonal_grid(grid_size, x_human)
-
 # Hexagonal case
 # x_human = [
 #     ((0,3),(6,0)),
@@ -167,11 +161,21 @@ else:
 #     ((2, 5), (4, 3)),
 #     ((3, 6), (6, 2)),
 # ]
-# x_human = select_node_pairs_hex(grid_size)
-# print("Begin and end points:")
-# print(x_human)
-# V, E, X = create_hexagonal_grid(grid_size, x_human)
+shape = config["shape"]
+if shape == "rectangle":
+    x_human = select_node_pairs_rec(grid_size)
+elif shape == "hexagon":
+    x_human = select_node_pairs_hex(grid_size)
+else:
+    raise ValueError("shape must be either 'rectangle' or 'hexagon'")
+config["extremities"] = x_human
+json.dump(config, open("config.json", "w"))
 
+if shape == "rectangle":
+    V, E, X = create_rectangular_grid(grid_size, x_human)
+else:
+    V, E, X = create_hexagonal_grid(grid_size, x_human)
+print(V, E, X)
 solver = NumberlinkSolver(V, E, X)
 clauses = solver.get_constraints()
 correspondance_dict = {}
